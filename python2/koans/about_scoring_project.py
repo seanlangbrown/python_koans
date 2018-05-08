@@ -33,10 +33,30 @@ from runner.koan import *
 #
 # Your goal is to write the score method.
 
+def match(val):
+    return lambda accum, item: accum + int(item == val)
+
 def score(dice):
     # You need to write this method
-    pass
-
+    basescore = 0
+    cache = dict()
+    most = 0
+    maxcount = 0
+    for i in range(1, 7):
+        count = reduce(match(i), dice, 0)
+        cache[i] = count
+        if count >= maxcount:
+            if i > most:
+                most = i
+                maxcount = count
+    #print cache
+    if cache[1] >= 3:
+        basescore = 1000
+        cache[1] = cache[1] - 3
+    elif maxcount >= 3:
+        basescore =  most * 100
+        cache[most] = cache[most] - 3
+    return basescore + cache[5] * 50 + cache[1] * 100
 
 class AboutScoringProject(Koan):
     def test_score_of_an_empty_list_is_zero(self):
